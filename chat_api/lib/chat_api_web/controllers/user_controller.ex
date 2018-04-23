@@ -8,7 +8,7 @@ defmodule ChatApiWeb.UserController do
 
     case Repo.insert(changeset) do
       {:ok, user} ->
-        new_conn = Guardian.Plug.api_sign_in(conn, user, :access)
+        new_conn = Guardian.Plug.sign_in(conn, user, :access)
         jwt = Guardian.Plug.current_token(new_conn)
 
         new_conn

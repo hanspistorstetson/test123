@@ -4,7 +4,7 @@ services:
     build: ./chat_api/
     ports:
       - "80:4000"
-    command: tail -f /dev/null
+    command: bash start.sh
     environment:
       - MIX_ENV=dev
       - PORT=4000
