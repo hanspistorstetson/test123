@@ -15,7 +15,7 @@ config :chat_api, ChatApiWeb.Endpoint,
   render_errors: [view: ChatApiWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: ChatApi.PubSub, adapter: Phoenix.PubSub.PG2]
 
-config :guardian, ChatApi.Auth.Guardian,
+config :chat_api, ChatApi.Auth.Guardian,
   issuer: "chat_api",
   secret_key: "v0wiiP5C4LmfJnao09kakQ5H/Xtur/+A4mYc4qEDkPWhcsU3HeAV3MQfrGqlVUVs"
 

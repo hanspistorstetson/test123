@@ -5,7 +5,7 @@ defmodule ChatApiWeb.SessionView do
     IO.puts("ehre")
 
     %{
-      data: render_one(user, ChatApi.UserView, "user.json"),
+      data: render_one(user, ChatApiWeb.UserView, "user.json"),
       meta: %{token: jwt}
     }
   end

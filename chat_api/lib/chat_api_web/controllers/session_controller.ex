@@ -16,10 +16,10 @@ defmodule ChatApiWeb.SessionController do
   end
 
   def login_reply({:ok, user}, conn) do
-    IO.inspect(user)
+	
 
     conn
-    |> Guardian.Plug.sign_in(conn, :access)
+    |> ChatApi.Auth.Guardian.Plug.sign_in(user)
     |> render("show.json", user: user, jwt: "no")
 
     # conn

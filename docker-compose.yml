@@ -3,7 +3,7 @@ services:
   web:
     build: ./chat_api/
     ports:
-      - "80:4000"
+      - "4000:4000"
     command: bash start.sh
     environment:
       - MIX_ENV=dev

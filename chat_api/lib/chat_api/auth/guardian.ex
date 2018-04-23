@@ -6,17 +6,17 @@ defmodule ChatApi.Auth.Guardian do
   end
 
   def resource_from_claims(claims) do
-    user =
-      claims["sub"]
-      |> ChatApi.ChatApi.get_user!()
+	IO.inspect(claims)
+	user = claims["sub"]
+	|> ChatApi.ChatApi.get_user()
 
-    {:ok, user}
+	{:ok, user}
   end
 
   # def resource_from_claims(claims) do
   #   user =
   #     claims["sub"]
-  #     |> ChatApi.ChatApi.get_user()
+  #     |> ChatApi.ChatApi.get_user!()
   #
   #   {:ok, user}
   # end
