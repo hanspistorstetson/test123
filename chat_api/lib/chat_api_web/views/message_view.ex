@@ -12,4 +12,11 @@ defmodule ChatApiWeb.MessageView do
       }
     }
   end
+
+  def render("index.json", %{messages: messages, pagination: pagination}) do
+    %{
+      data: render_many(messages, ChatApiWeb.MessageView, "message.json"),
+      pagination: pagination
+    }
+  end
 end

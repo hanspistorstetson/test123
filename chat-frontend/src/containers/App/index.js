@@ -18,7 +18,7 @@ type Props = {
   isAuthenticated: boolean,
   willAuthenticate: boolean,
   logout: () => void,
-  currentUserRooms: Array
+  currentUserRooms: Array,
 }
 
 class App extends Component {
@@ -34,7 +34,7 @@ class App extends Component {
 
   props: Props
 
-  handleLogout = router => this.props.logout(router)
+  handleLogout = router => this.props.logout(router);
 
   render() {
     const { isAuthenticated, willAuthenticate, currentUserRooms } = this.props;
@@ -45,7 +45,11 @@ class App extends Component {
         {({ router }) => (
           <div style={{ display: 'flex', flex: '1' }}>
             {isAuthenticated &&
-              <Sidebar router={router} rooms={currentUserRooms} onLogoutClick={this.handleLogout} />
+              <Sidebar
+                router={router}
+                rooms={currentUserRooms}
+                onLogoutClick={this.handleLogout}
+              />
             }
             <MatchAuthenticated exactly pattern="/" component={Home} {...authProps} />
             <RedirectAuthenticated pattern="/login" component={Login} {...authProps} />

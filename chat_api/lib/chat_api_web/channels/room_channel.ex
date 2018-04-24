@@ -19,7 +19,17 @@ defmodule ChatApiWeb.RoomChannel do
       pagination: ChatApiWeb.PaginationHelpers.pagination(page)
     }
 
+    send(self(), :after_join)
     {:ok, response, assign(socket, :room, room)}
+  end
+
+  def handle_info(:after_join, socket) do
+    ChatApiWeb.Presence.track(socket, socket.assigns.current_user.id, %{
+      user: Phoenix.View.render_one(socket.assigns.current_user, ChatApiWeb.UserView, "user.json")
+    })
+
+    push(socket, "presence_state", ChatApiWeb.Presence.list(socket))
+    {:noreply, socket}
   end
 
   def handle_in("new_message", params, socket) do

@@ -19,9 +19,13 @@ export default function (state = initialState, action) {
       return {
         ...state,
         all: [
-          action.response.data, ...state.all,
+          action.response.data,
+          ...state.all,
         ],
-        currentUserRooms: [...state.currentUserRooms, action.response.data],
+        currentUserRooms: [
+          ...state.currentUserRooms,
+          action.response.data,
+        ],
       };
     case 'ROOM_JOINED':
       return {

@@ -1,13 +1,12 @@
 import React from 'react';
 
-
 type Props = {
   room: {
     id: number,
-    name: string
+    name: string,
   },
   currentUserRoomIds: Array,
-  onRoomJoin: () => void
+  onRoomJoin: () => void,
 }
 
 const RoomListItem = ({ room, currentUserRoomIds, onRoomJoin }: Props) => {
@@ -20,11 +19,11 @@ const RoomListItem = ({ room, currentUserRoomIds, onRoomJoin }: Props) => {
         onClick={() => onRoomJoin(room.id)}
         className="btn btn-sm"
         disabled={isJoined}
-      >{isJoined ? 'Joined' : 'Join'}
+      >
+        {isJoined ? 'Joined' : 'Join'}
       </button>
     </div>
   );
 };
-
 
 export default RoomListItem;

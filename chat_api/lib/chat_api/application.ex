@@ -11,7 +11,8 @@ defmodule ChatApi.Application do
       # Start the Ecto repository
       supervisor(ChatApi.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(ChatApiWeb.Endpoint, [])
+      supervisor(ChatApiWeb.Endpoint, []),
+      supervisor(ChatApiWeb.Presence, [])
       # Start your own worker by calling: ChatApi.Worker.start_link(arg1, arg2, arg3)
       # worker(ChatApi.Worker, [arg1, arg2, arg3]),
     ]
