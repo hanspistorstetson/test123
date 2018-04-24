@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Miss } from 'react-router';
 import { connect } from 'react-redux';
-import { authenticate, unauthenticate } from '../../actions/session';
+import { authenticate, unauthenticate, logout } from '../../actions/session';
 import Home from '../Home';
 import NotFound from '../../components/NotFound';
 import Login from '../Login';
