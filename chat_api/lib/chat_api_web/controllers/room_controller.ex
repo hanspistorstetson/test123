@@ -1,42 +1,59 @@
 defmodule ChatApiWeb.RoomController do
   use ChatApiWeb, :controller
 
-  alias ChatApi.ChatApi
   alias ChatApi.ChatApi.Room
-
-  action_fallback ChatApiWeb.FallbackController
+  alias ChatApi.Repo
 
   def index(conn, _params) do
-    rooms = ChatApi.list_rooms()
+    rooms = Repo.all(Room)
     render(conn, "index.json", rooms: rooms)
   end
 
-  def create(conn, %{"room" => room_params}) do
-    with {:ok, %Room{} = room} <- ChatApi.create_room(room_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", room_path(conn, :show, room))
-      |> render("show.json", room: room)
+  def create(conn, params) do
+    current_user = ChatApi.Auth.Guardian.Plug.current_resource(conn)
+    changeset = Room.changeset(%Room{}, params)
+
+    case Repo.insert(changeset) do
+      {:ok, room} ->
+        assoc_changeset =
+          ChatApi.ChatApi.UserRoom.changeset(%ChatApi.ChatApi.UserRoom{}, %{
+            user_id: current_user.id,
+            room_id: room.id
+          })
+
+        Repo.insert(assoc_changeset)
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", room: room)
+
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(ChatApiWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    room = ChatApi.get_room!(id)
-    render(conn, "show.json", room: room)
-  end
+  def join(conn, %{"id" => room_id}) do
+    current_user = ChatApi.Auth.Guardian.Plug.current_resource(conn)
+    room = Repo.get(Room, room_id)
 
-  def update(conn, %{"id" => id, "room" => room_params}) do
-    room = ChatApi.get_room!(id)
+    changeset =
+      ChatApi.ChatApi.UserRoom.changeset(%ChatApi.ChatApi.UserRoom{}, %{
+        room_id: room_id,
+        user_id: current_user.id
+      })
 
-    with {:ok, %Room{} = room} <- ChatApi.update_room(room, room_params) do
-      render(conn, "show.json", room: room)
-    end
-  end
+    case Repo.insert(changeset) do
+      {:ok, _user_room} ->
+        conn
+        |> put_status(:created)
+        |> render("show.json", %{room: room})
 
-  def delete(conn, %{"id" => id}) do
-    room = ChatApi.get_room!(id)
-    with {:ok, %Room{}} <- ChatApi.delete_room(room) do
-      send_resp(conn, :no_content, "")
+      {:error, changeset} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> render(ChatApiWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 end

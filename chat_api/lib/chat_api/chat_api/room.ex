@@ -2,10 +2,10 @@ defmodule ChatApi.ChatApi.Room do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "rooms" do
-    field :name, :string
-    field :topic, :string
+    field(:name, :string)
+    field(:topic, :string)
+    many_to_many(:users, ChatApi.ChatApi.User, join_through: "user_rooms")
 
     timestamps()
   end
@@ -14,6 +14,7 @@ defmodule ChatApi.ChatApi.Room do
   def changeset(room, attrs) do
     room
     |> cast(attrs, [:name, :topic])
-    |> validate_required([:name, :topic])
+    |> validate_required([:name])
+    |> unique_constraint(:name)
   end
 end

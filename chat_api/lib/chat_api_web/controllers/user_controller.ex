@@ -21,4 +21,10 @@ defmodule ChatApiWeb.UserController do
         |> render(ChatApiWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
+
+  def rooms(conn, _params) do
+    current_user = ChatApi.Auth.Guardian.Plug.current_resource(conn)
+    rooms = Repo.all(assoc(current_user, :rooms))
+    render(conn, ChatApiWeb.RoomView, "index.json", %{rooms: rooms})
+  end
 end
