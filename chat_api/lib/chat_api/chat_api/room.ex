@@ -6,6 +6,7 @@ defmodule ChatApi.ChatApi.Room do
     field(:name, :string)
     field(:topic, :string)
     many_to_many(:users, ChatApi.ChatApi.User, join_through: "user_rooms")
+    has_many(:messages, ChatApi.ChatApi.Message)
 
     timestamps()
   end

@@ -1,5 +1,6 @@
 defmodule ChatApi.Repo do
   use Ecto.Repo, otp_app: :chat_api
+  use Scrivener, page_size: 25
 
   @doc """
   Dynamically loads the repository url from the

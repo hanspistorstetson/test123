@@ -41,12 +41,13 @@ defmodule ChatApiWeb.SessionController do
   end
 
   def refresh(conn, _params) do
-    user = ChatApi.Auth.Guardian.Plug.current_resource(conn)
     jwt = ChatApi.Auth.Guardian.Plug.current_token(conn)
-    claims = Guardian.Plug.current_claims(conn)
+    {:ok, user, _claims} = ChatApi.Auth.Guardian.resource_from_token(jwt)
 
     case ChatApi.Auth.Guardian.refresh(jwt) do
-      {:ok, new_jwt, _new_claims} ->
+      {:ok, new_jwt_struct, _new_claims} ->
+        {new_jwt, _otherStuff} = new_jwt_struct
+
         conn
         |> put_status(:ok)
         |> render("show.json", user: user, jwt: new_jwt)

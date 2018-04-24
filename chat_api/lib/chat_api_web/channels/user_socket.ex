@@ -2,10 +2,10 @@ defmodule ChatApiWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", ChatApiWeb.RoomChannel
+  channel("rooms:*", ChatApiWeb.RoomChannel)
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
@@ -19,9 +19,24 @@ defmodule ChatApiWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
-    {:ok, socket}
+
+  def connect(%{"token" => token, "vsn" => _vsn}, socket) do
+    case(ChatApi.Auth.Guardian.decode_and_verify(token)) do
+      {:ok, claims} ->
+        case ChatApi.Auth.Guardian.resource_from_claims(claims) do
+          {:ok, user} ->
+            {:ok, assign(socket, :current_user, user)}
+
+          {:error, _reason} ->
+            :error
+        end
+
+      {:error, _reason} ->
+        :error
+    end
   end
+
+  def connect(_params, _socket), do: :error
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #
@@ -33,5 +48,5 @@ defmodule ChatApiWeb.UserSocket do
   #     ChatApiWeb.Endpoint.broadcast("user_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
-  def id(_socket), do: nil
+  def id(socket), do: "users_socket:#{socket.assigns.current_user.id}"
 end

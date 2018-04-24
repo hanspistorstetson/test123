@@ -32,9 +32,6 @@ defmodule ChatApiWeb.Router do
   scope "/api", ChatApiWeb do
     pipe_through([:api, :auth])
 
-    delete("/sessions", SessionController, :delete)
-    post("/sessions/refresh", SessionController, :refresh)
-
     get("/users/:id/rooms", UserController, :rooms)
     resources("/rooms", RoomController, only: [:index, :create])
     post("/rooms/:id/join", RoomController, :join)
@@ -44,6 +41,8 @@ defmodule ChatApiWeb.Router do
   scope "/api", ChatApiWeb do
     pipe_through([:api])
     post("/sessions", SessionController, :create)
+    delete("/sessions", SessionController, :delete)
+    post("/sessions/refresh", SessionController, :refresh)
   end
 
   # Other scopes may use custom stacks.
