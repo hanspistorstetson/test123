@@ -2,8 +2,6 @@ defmodule ChatApiWeb.SessionView do
   use ChatApiWeb, :view
 
   def render("show.json", %{user: user, jwt: jwt}) do
-    IO.puts("ehre")
-
     %{
       data: render_one(user, ChatApiWeb.UserView, "user.json"),
       meta: %{token: jwt}

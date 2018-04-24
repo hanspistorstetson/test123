@@ -6,10 +6,10 @@ defmodule ChatApiWeb.UserController do
   def create(conn, params) do
     changeset = User.registration_changeset(%User{}, params)
 
-    case Repo.insert(changeset) do
+    case ChatApi.Repo.insert(changeset) do
       {:ok, user} ->
-        new_conn = Guardian.Plug.sign_in(conn, user, :access)
-        jwt = Guardian.Plug.current_token(new_conn)
+        {:ok, jwt, _claims} = ChatApi.Auth.Guardian.encode_and_sign(user)
+        new_conn = ChatApi.Auth.Guardian.Plug.sign_in(conn, user)
 
         new_conn
         |> put_status(:created)
@@ -18,7 +18,7 @@ defmodule ChatApiWeb.UserController do
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> render(ChatApiWeb.ChangesetrView, "error.json", changeset: changeset)
+        |> render(ChatApiWeb.ChangesetView, "error.json", changeset: changeset)
     end
   end
 end

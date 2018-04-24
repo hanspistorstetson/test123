@@ -29,11 +29,6 @@ defmodule ChatApi.ChatApi.User do
     |> put_password_hash()
   end
 
-  def get_user(id) do
-    query = Ecto.Query.from(u in User, where: u.id == ^id)
-    Repo.one(query)
-  end
-
   defp put_password_hash(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->

@@ -4,8 +4,8 @@ defmodule ChatApiWeb.SessionController do
   import Ecto.Query
   alias ChatApi.Auth.Auth
 
-  def create(conn, %{"session" => %{"username" => username, "password" => password}}) do
-    Auth.authenticate_user(username, password)
+  def create(conn, %{"session" => %{"email" => email, "password" => password}}) do
+    Auth.authenticate_user(email, password)
     |> login_reply(conn)
   end
 
@@ -16,11 +16,11 @@ defmodule ChatApiWeb.SessionController do
   end
 
   def login_reply({:ok, user}, conn) do
-	
+    {:ok, jwt, _claims} = ChatApi.Auth.Guardian.encode_and_sign(user)
+    new_conn = ChatApi.Auth.Guardian.Plug.sign_in(conn, user)
 
-    conn
-    |> ChatApi.Auth.Guardian.Plug.sign_in(user)
-    |> render("show.json", user: user, jwt: "no")
+    new_conn
+    |> render("show.json", user: user, jwt: jwt)
 
     # conn
     # |> Guardian.Plug.sign_in(user)
@@ -33,7 +33,7 @@ defmodule ChatApiWeb.SessionController do
 
   def delete(conn, _) do
     jwt = Guardian.Plug.current_token(conn)
-    Guardian.revoke!(jwt)
+    {:ok, _claims} = ChatApi.Auth.Guardian.revoke(jwt)
 
     conn
     |> put_status(:ok)
@@ -41,11 +41,11 @@ defmodule ChatApiWeb.SessionController do
   end
 
   def refresh(conn, _params) do
-    user = Guardian.Plug.current_resource(conn)
-    jwt = Guardian.Plug.current_token(conn)
-    {:ok, claims} = Guardian.Plug.current_claims(conn)
+    user = ChatApi.Auth.Guardian.Plug.current_resource(conn)
+    jwt = ChatApi.Auth.Guardian.Plug.current_token(conn)
+    claims = Guardian.Plug.current_claims(conn)
 
-    case Guardian.refresh!(jwt, claims, %{ttl: {30, :days}}) do
+    case ChatApi.Auth.Guardian.refresh(jwt) do
       {:ok, new_jwt, _new_claims} ->
         conn
         |> put_status(:ok)

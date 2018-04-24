@@ -3,8 +3,8 @@ defmodule ChatApi.Auth.Auth do
 
   import Ecto.Query, warn: false
 
-  def authenticate_user(username, password) do
-    query = Ecto.Query.from(u in ChatApi.ChatApi.User, where: u.username == ^username)
+  def authenticate_user(email, password) do
+    query = Ecto.Query.from(u in ChatApi.ChatApi.User, where: u.email == ^email)
 
     ChatApi.Repo.one(query)
     |> check_password(password)
@@ -13,9 +13,6 @@ defmodule ChatApi.Auth.Auth do
   defp check_password(nil, _), do: {:error, "incorrect username or password"}
 
   defp check_password(user, password) do
-    IO.inspect(user)
-    IO.inspect(password)
-
     case Bcrypt.checkpw(password, user.password_hash) do
       true -> {:ok, user}
       false -> {:error, "Incorrect username or password"}

@@ -26,12 +26,16 @@ defmodule ChatApiWeb.Router do
   end
 
   scope "/api", ChatApiWeb do
-    pipe_through(:api)
+    post("/users", UserController, :create)
+  end
 
+  scope "/api", ChatApiWeb do
+    pipe_through(:api)
     post("/sessions", SessionController, :create)
     delete("/sessions", SessionController, :delete)
     post("/sessions/refresh", SessionController, :refresh)
-    resources("/users", UserController, only: [:create])
+
+    # resources("/users", UserController, only: [:create])
   end
 
   # Other scopes may use custom stacks.
