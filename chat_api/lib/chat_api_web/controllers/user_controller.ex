@@ -24,7 +24,7 @@ defmodule ChatApiWeb.UserController do
 
   def rooms(conn, _params) do
     current_user = ChatApi.Auth.Guardian.Plug.current_resource(conn)
-    rooms = Repo.all(assoc(current_user, :rooms))
+    rooms = ChatApi.Repo.all(Ecto.assoc(current_user, :rooms))
     render(conn, ChatApiWeb.RoomView, "index.json", %{rooms: rooms})
   end
 end
